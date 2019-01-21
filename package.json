@@ -4,7 +4,8 @@
   "description": "DevLink is social network for developers",
   "main": "server.js",
   "scripts": {
-    "test": "MIT"
+    "start": "node server.js",
+    "server": "nodemon server.js"
   },
   "repository": {
     "type": "git",
