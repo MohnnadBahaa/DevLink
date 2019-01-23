@@ -13,7 +13,7 @@ router.get("/test", (req, res) => res.send(" user it is working"));
 router.post("/signup", (req, res) => {
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      return res.status(400).json({ email: "Email already Exists" });
+      return res.status(400).json({ signup: "Email already Exists" });
     } else {
       // avatar from gravatar
       const avatar = gravatar.url(req.body.email, {
@@ -33,7 +33,7 @@ router.post("/signup", (req, res) => {
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hashedPassword) => {
           if (err) {
-            res.status(400).json("invalid password");
+            res.status(400).json({ signup: "invalid password" });
           }
           newUser.password = hashedPassword;
           newUser
@@ -45,6 +45,28 @@ router.post("/signup", (req, res) => {
     }
   });
 });
-// ---------- End signup ---------- //
+
+// login router
+// ---------- Login ---------- //
+router.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  // fin user by email
+  User.findOne({ email }).then(user => {
+    if (!user) {
+      return res.status(404).json({ login: "user not found" });
+    }
+
+    // userfound comapre password with hashed password
+    bcrypt.compare(password, user.password).then(isMatch => {
+      if (isMatch) {
+        res.status(200).json({ login: "success login" });
+      } else {
+        return res.status(400).json({ login: "invalid user name or password" });
+      }
+    });
+  });
+});
 
 module.exports = router;
