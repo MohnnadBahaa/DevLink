@@ -9,6 +9,7 @@ const User = require("../models/User");
 router.get("/test", (req, res) => res.send(" user it is working"));
 
 // register router
+// ---------- signup ---------- //
 router.post("/signup", (req, res) => {
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
@@ -31,7 +32,9 @@ router.post("/signup", (req, res) => {
       // hash password by using bcrypt
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hashedPassword) => {
-          if (err) throw err;
+          if (err) {
+            res.status(400).json("invalid password");
+          }
           newUser.password = hashedPassword;
           newUser
             .save()
@@ -42,5 +45,6 @@ router.post("/signup", (req, res) => {
     }
   });
 });
+// ---------- End signup ---------- //
 
 module.exports = router;
